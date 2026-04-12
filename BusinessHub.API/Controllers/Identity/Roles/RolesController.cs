@@ -56,7 +56,7 @@ namespace BusinessHub.API.Controllers.Identity.Roles
             return Ok(new ApiResponse<RoleDto>(true, "Success", data));
         }
 
-        [HttpPost("deactivate/{id}")]
+        [HttpPatch("{id}/deactivate")]
         public IActionResult Deactivate(int id)
         {
             var result = _service.DeactivateRole(id, "System");
@@ -64,7 +64,7 @@ namespace BusinessHub.API.Controllers.Identity.Roles
             return Ok(new ApiResponse<bool>(true, "Deactivated", result));
         }
 
-        [HttpPost("reactivate/{id}")]
+        [HttpPatch("{id}/reactivate")]
         public IActionResult Reactivate(int id)
         {
             var result = _service.ReactivateRole(id, "System");

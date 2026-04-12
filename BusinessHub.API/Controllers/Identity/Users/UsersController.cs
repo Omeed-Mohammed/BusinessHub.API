@@ -62,7 +62,7 @@ namespace BusinessHub.API.Controllers.Identity.Users
             return Ok(new ApiResponse<bool>(true, "Password changed", result));
         }
 
-        [HttpPost("deactivate/{id}")]
+        [HttpPatch("{id}/deactivate")]
         public IActionResult Deactivate(int id)
         {
             var result = _service.DeactivateUser(id, "System");
@@ -70,7 +70,7 @@ namespace BusinessHub.API.Controllers.Identity.Users
             return Ok(new ApiResponse<bool>(true, "User deactivated", result));
         }
 
-        [HttpPost("reactivate/{id}")]
+        [HttpPatch("{id}/reactivate")]
         public IActionResult Reactivate(int id)
         {
             var result = _service.ReactivateUser(id, "System");

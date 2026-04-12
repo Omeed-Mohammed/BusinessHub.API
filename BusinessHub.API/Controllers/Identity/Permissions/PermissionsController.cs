@@ -54,14 +54,14 @@ namespace BusinessHub.API.Controllers.Identity.Permissions
             return Ok(new ApiResponse<PermissionDto>(true, "Success", data));
         }
 
-        [HttpPost("deactivate/{id}")]
+        [HttpPatch("{id}/deactivate")]
         public IActionResult Deactivate(int id)
         {
             var result = _service.DeactivatePermission(id, "System");
             return Ok(new ApiResponse<bool>(result, "Deactivated", result));
         }
 
-        [HttpPost("reactivate/{id}")]
+        [HttpPatch("{id}/reactivate")]
         public IActionResult Reactivate(int id)
         {
             var result = _service.ReactivatePermission(id, "System");
