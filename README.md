@@ -2,31 +2,39 @@
 
 ## 🚀 Overview
 BusinessHub.API is a modular, production-ready backend system built with ASP.NET Core using Clean Architecture principles.  
-It provides a scalable foundation for managing business operations such as Identity and Persons management.
+It provides a scalable foundation for managing business operations including **Core, Identity, and Persons modules**.
 
 ---
 
 ## 🏗 Architecture
 - Clean Architecture (API / Modules / Infrastructure / Contracts)
 - SOLID Principles (SRP, DIP)
-- Repository Pattern with Interfaces
-- DTO Separation (Entity / Request)
-- Mapper Layer (Request ↔ DTO)
+- ADO.NET + Stored Procedures (No ORM)
+- DTO Separation (Request / Entity)
+- Mapper Layer (Request → DTO)
 - FluentValidation (Validator Layer)
 - Global Exception Handling (Middleware)
 - Dependency Injection
+- Thin Controllers + ApiResponse<T>
 
 ---
 
 ## 🔐 Modules
+
+### Core ✅
+- Company Management (CRUD + Activation)
+- Company Settings
+- Branch Management per Company
+- Client Management per Company
+
 ### Identity
 - Users, Roles, Permissions
 - RolePermissions, UserRoles
-- Secure authentication & password handling
+- Secure authentication (BCrypt)
 
 ### Persons
 - Person Management
-- Phones & Notes (Sub-resources)
+- Phones & Notes
 - Search & filtering
 
 ---
@@ -48,6 +56,15 @@ It provides a scalable foundation for managing business operations such as Ident
 ---
 
 ## 📌 Highlights
-- Clean & scalable architecture  
+- Modular Monolith Architecture  
 - Database-driven business rules  
-- Production-level design  
+- Soft Delete (IsActive)  
+- Production-ready structure  
+
+---
+
+## 📦 Status
+- Core Module ✔ Completed  
+- Identity Module ✔ Completed  
+- Persons Module ✔ Completed  
+- Ready for next modules (DebtFlow, HR, Projects)
