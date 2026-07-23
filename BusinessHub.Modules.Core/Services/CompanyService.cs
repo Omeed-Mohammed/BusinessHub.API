@@ -22,15 +22,6 @@ namespace BusinessHub.Modules.Core.Services
             if (company == null)
                 throw new ArgumentException("Invalid data");
 
-            if (string.IsNullOrWhiteSpace(company.CompanyName))
-                throw new ArgumentException("CompanyName required");
-
-            if (string.IsNullOrWhiteSpace(company.Country))
-                throw new ArgumentException("Country required");
-
-            if (string.IsNullOrWhiteSpace(company.City))
-                throw new ArgumentException("City required");
-
             return _repo.AddCompany(company, currentUser);
         }
 
@@ -42,17 +33,17 @@ namespace BusinessHub.Modules.Core.Services
             return _repo.UpdateCompany(company, currentUser);
         }
 
-        public List<CompanyDto> GetAllCompanies()
+        public List<CompanyDto> GetAll(string currentUser, bool? isActive = null)
         {
-            return _repo.GetAllCompanies() ?? new List<CompanyDto>();
+            return _repo.GetAll(currentUser, isActive) ?? new List<CompanyDto>();
         }
 
-        public CompanyDto GetCompanyById(int companyId)
+        public CompanyDto GetCompanyById(int companyId, string currentUser)
         {
             if (companyId <= 0)
                 throw new ArgumentException("Invalid CompanyID");
 
-            var company = _repo.GetCompanyById(companyId);
+            var company = _repo.GetCompanyById(companyId, currentUser);
 
             if (company == null)
                 throw new KeyNotFoundException("Company not found");
@@ -60,20 +51,20 @@ namespace BusinessHub.Modules.Core.Services
             return company;
         }
 
-        public bool DeactivateCompany(int companyId)
+        public bool DeactivateCompany(int companyId, string currentUser)
         {
             if (companyId <= 0)
                 throw new ArgumentException("Invalid CompanyID");
 
-            return _repo.DeactivateCompany(companyId);
+            return _repo.DeactivateCompany(companyId, currentUser);
         }
 
-        public bool ReactivateCompany(int companyId)
+        public bool ReactivateCompany(int companyId, string currentUser)
         {
             if (companyId <= 0)
                 throw new ArgumentException("Invalid CompanyID");
 
-            return _repo.ReactivateCompany(companyId);
+            return _repo.ReactivateCompany(companyId, currentUser);
         }
     }
 }

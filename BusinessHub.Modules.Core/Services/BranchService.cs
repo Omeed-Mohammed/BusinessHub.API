@@ -22,12 +22,6 @@ namespace BusinessHub.Modules.Core.Services
             if (branch == null)
                 throw new ArgumentException("Invalid data");
 
-            if (branch.CompanyID <= 0)
-                throw new ArgumentException("CompanyID required");
-
-            if (string.IsNullOrWhiteSpace(branch.BranchName))
-                throw new ArgumentException("BranchName required");
-
             return _repo.Add(branch, currentUser);
         }
 

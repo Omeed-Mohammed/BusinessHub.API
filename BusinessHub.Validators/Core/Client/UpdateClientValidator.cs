@@ -20,6 +20,9 @@ namespace BusinessHub.Validators.Core.Client
 
             RuleFor(x => x.ClientName)
                 .NotEmpty();
+
+            RuleFor(x => x.ClientTypeID)
+                .GreaterThan(0);
         }
     }
 }

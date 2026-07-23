@@ -1,70 +1,105 @@
 # BusinessHub.API
 
-## 🚀 Overview
-BusinessHub.API is a modular, production-ready backend system built with ASP.NET Core using Clean Architecture principles.  
-It provides a scalable foundation for managing business operations including **Core, Identity, and Persons modules**.
+A modular business management backend built with **ASP.NET Core**, following **Clean Architecture** and **SOLID** principles.
+
+BusinessHub is designed as a **Modular Monolith**, providing a scalable foundation for building business applications through independent modules that share a consistent architecture and development standards.
 
 ---
 
-## 🏗 Architecture
-- Clean Architecture (API / Modules / Infrastructure / Contracts)
-- SOLID Principles (SRP, DIP)
-- ADO.NET + Stored Procedures (No ORM)
+## ✨ Features
+
+- Modular Monolith Architecture
+- Clean Architecture
+- ADO.NET + SQL Server Stored Procedures
+- FluentValidation
+- Global Exception Handling
+- Standardized API Responses
+- Thin Controllers
 - DTO Separation (Request / Entity)
-- Mapper Layer (Request → DTO)
-- FluentValidation (Validator Layer)
-- Global Exception Handling (Middleware)
 - Dependency Injection
-- Thin Controllers + ApiResponse<T>
+- Soft Delete (IsActive)
 
 ---
 
-## 🔐 Modules
+## 🏗️ Architecture
 
-### Core ✅
-- Company Management (CRUD + Activation)
+```
+API
+├── Controllers
+
+Modules
+├── Services
+
+Infrastructure
+├── Repositories
+
+Contracts
+├── DTOs
+├── Requests
+
+MapperLayer
+ValidatorLayer
+MiddlewareLayer
+```
+
+---
+
+## 📦 Implemented Modules
+
+### Core
+- Company
 - Company Settings
-- Branch Management per Company
-- Client Management per Company
+- Branch
+- Client
+- Client Type
 
 ### Identity
-- Users, Roles, Permissions
-- RolePermissions, UserRoles
-- Secure authentication (BCrypt)
+- Login
+- Users
+- Roles
+- Permissions
+- User Roles
+- Role Permissions
 
 ### Persons
-- Person Management
-- Phones & Notes
-- Search & filtering
+- Persons
+- Person Phones
+- Person Notes
+
+### Projects
+- Projects
+- Project Tasks
+- Project Employees
+- Project Status
+
+### Suppliers
+- Suppliers
 
 ---
 
 ## ⚙️ Tech Stack
+
 - ASP.NET Core Web API
+- C#
+- SQL Server
 - ADO.NET
-- SQL Server (Stored Procedures)
+- Stored Procedures
 - FluentValidation
 
 ---
 
-## ▶️ Run
-1. Clone repo  
-2. Configure `appsettings.json` (ConnectionString)  
-3. Run project  
-4. Open Swagger  
+## 🚧 Project Status
 
----
+The project is under active development.
 
-## 📌 Highlights
-- Modular Monolith Architecture  
-- Database-driven business rules  
-- Soft Delete (IsActive)  
-- Production-ready structure  
+### Completed
+- Core business modules
+- REST API endpoints
+- Database layer
+- Validation layer
+- Global exception handling
 
----
-
-## 📦 Status
-- Core Module ✔ Completed  
-- Identity Module ✔ Completed  
-- Persons Module ✔ Completed  
-- Ready for next modules (DebtFlow, HR, Projects)
+### In Progress
+- Security hardening
+- Authorization policies
+- Remaining API integrations

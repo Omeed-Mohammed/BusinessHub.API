@@ -20,6 +20,9 @@ namespace BusinessHub.Validators.Core.CompanySettings
 
             RuleFor(x => x.TaxRate)
                 .GreaterThanOrEqualTo(0);
+
+            RuleFor(x => x.CurrencyCode)
+                .Length(3);
         }
     }
 }

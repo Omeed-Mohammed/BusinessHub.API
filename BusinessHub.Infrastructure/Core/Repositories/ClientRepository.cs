@@ -20,6 +20,61 @@ namespace BusinessHub.Infrastructure.Core.Repositories
             _cs = config.GetConnectionString("DefaultConnection")!;
         }
 
+
+        public List<ClientDto> GetAll(bool? isActive = null)
+        {
+            var clients = new List<ClientDto>();
+
+            using (SqlConnection conn = new SqlConnection(_cs))
+            using (SqlCommand cmd = new SqlCommand("core.SP_Client_GetAll", conn))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("@IsActive", (object?)isActive ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@CurrentUser", "System");
+
+                conn.Open();
+
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    int id = reader.GetOrdinal("ClientID");
+                    int compId = reader.GetOrdinal("CompanyID");
+                    int name = reader.GetOrdinal("ClientName");
+                    int phone = reader.GetOrdinal("Phone");
+                    int email = reader.GetOrdinal("Email");
+                    int address = reader.GetOrdinal("Address");
+                    int note = reader.GetOrdinal("Note");
+                    int isActiveCol = reader.GetOrdinal("IsActive");
+                    int createdAt = reader.GetOrdinal("CreatedAt");
+                    int createdBy = reader.GetOrdinal("CreatedBy");
+                    int updatedAt = reader.GetOrdinal("UpdatedAt");
+                    int updatedBy = reader.GetOrdinal("UpdatedBy");
+                    int clientTypeID = reader.GetOrdinal("ClientTypeID");
+
+                    while (reader.Read())
+                    {
+                        clients.Add(new ClientDto(
+                            reader.GetInt32(id),
+                            reader.GetInt32(compId),
+                            reader.GetString(name),
+                            reader.IsDBNull(phone) ? null : reader.GetString(phone),
+                            reader.IsDBNull(email) ? null : reader.GetString(email),
+                            reader.IsDBNull(address) ? null : reader.GetString(address),
+                            reader.IsDBNull(note) ? null : reader.GetString(note),
+                            reader.GetBoolean(isActiveCol),
+                            reader.IsDBNull(createdAt) ? (DateTime?)null : reader.GetDateTime(createdAt),
+                            reader.IsDBNull(createdBy) ? null : reader.GetString(createdBy),
+                            reader.IsDBNull(updatedAt) ? (DateTime?)null : reader.GetDateTime(updatedAt),
+                            reader.IsDBNull(updatedBy) ? null : reader.GetString(updatedBy),
+                            reader.IsDBNull(clientTypeID) ? null : reader.GetInt32(clientTypeID)
+                        ));
+                    }
+                }
+            }
+
+            return clients;
+        }
+
         public List<ClientDto> GetByCompanyId(int companyId)
         {
             var clients = new List<ClientDto>();
@@ -46,6 +101,7 @@ namespace BusinessHub.Infrastructure.Core.Repositories
                     int createdBy = reader.GetOrdinal("CreatedBy");
                     int updatedAt = reader.GetOrdinal("UpdatedAt");
                     int updatedBy = reader.GetOrdinal("UpdatedBy");
+                    int ClientTypeID = reader.GetOrdinal("ClientTypeID");
 
                     while (reader.Read())
                     {
@@ -61,7 +117,8 @@ namespace BusinessHub.Infrastructure.Core.Repositories
                             reader.IsDBNull(createdAt) ? (DateTime?)null : reader.GetDateTime(createdAt),
                             reader.IsDBNull(createdBy) ? null : reader.GetString(createdBy),
                             reader.IsDBNull(updatedAt) ? (DateTime?)null : reader.GetDateTime(updatedAt),
-                            reader.IsDBNull(updatedBy) ? null : reader.GetString(updatedBy)
+                            reader.IsDBNull(updatedBy) ? null : reader.GetString(updatedBy),
+                            reader.IsDBNull(ClientTypeID) ? null : reader.GetInt32(ClientTypeID)
                         ));
                     }
                 }
@@ -96,7 +153,8 @@ namespace BusinessHub.Infrastructure.Core.Repositories
                             reader["CreatedAt"] as DateTime?,
                             reader["CreatedBy"] as string,
                             reader["UpdatedAt"] as DateTime?,
-                            reader["UpdatedBy"] as string
+                            reader["UpdatedBy"] as string,
+                            reader.GetInt32(reader.GetOrdinal("ClientTypeID"))
                         );
                     }
                 }
@@ -119,6 +177,7 @@ namespace BusinessHub.Infrastructure.Core.Repositories
                 cmd.Parameters.AddWithValue("@Address", (object?)client.Address ?? DBNull.Value);
                 cmd.Parameters.AddWithValue("@Note", (object?)client.Note ?? DBNull.Value);
                 cmd.Parameters.AddWithValue("@CurrentUser", currentUser);
+                cmd.Parameters.AddWithValue("@ClientTypeID", (object?)client.ClientTypeID ?? DBNull.Value);
 
                 conn.Open();
                 return Convert.ToInt32(cmd.ExecuteScalar());
@@ -140,6 +199,7 @@ namespace BusinessHub.Infrastructure.Core.Repositories
                 cmd.Parameters.AddWithValue("@Address", (object?)client.Address ?? DBNull.Value);
                 cmd.Parameters.AddWithValue("@Note", (object?)client.Note ?? DBNull.Value);
                 cmd.Parameters.AddWithValue("@CurrentUser", currentUser);
+                cmd.Parameters.AddWithValue("@ClientTypeID", (object?)client.ClientTypeID ?? DBNull.Value);
 
                 conn.Open();
                 return cmd.ExecuteNonQuery() > 0;

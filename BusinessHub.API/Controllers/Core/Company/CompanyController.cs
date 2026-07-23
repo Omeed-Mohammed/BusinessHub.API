@@ -42,7 +42,7 @@ namespace BusinessHub.API.Controllers.Core.Company
         [HttpGet]
         public IActionResult GetAll()
         {
-            var result = _service.GetAllCompanies();
+            var result = _service.GetAll("Admin");
 
             return Ok(new ApiResponse<List<CompanyDto>>(true, "Success", result));
         }
@@ -50,7 +50,7 @@ namespace BusinessHub.API.Controllers.Core.Company
         [HttpGet("{companyId}")]
         public IActionResult GetById(int companyId)
         {
-            var result = _service.GetCompanyById(companyId);
+            var result = _service.GetCompanyById(companyId, "Admin");
 
             return Ok(new ApiResponse<CompanyDto>(true, "Success", result));
         }
@@ -58,7 +58,7 @@ namespace BusinessHub.API.Controllers.Core.Company
         [HttpPatch("{companyId}/deactivate")]
         public IActionResult Deactivate(int companyId)
         {
-            var result = _service.DeactivateCompany(companyId);
+            var result = _service.DeactivateCompany(companyId , "Admin");
 
             return Ok(new ApiResponse<bool>(true, "Company deactivated", result));
         }
@@ -66,7 +66,7 @@ namespace BusinessHub.API.Controllers.Core.Company
         [HttpPatch("{companyId}/reactivate")]
         public IActionResult Reactivate(int companyId)
         {
-            var result = _service.ReactivateCompany(companyId);
+            var result = _service.ReactivateCompany(companyId, "Admin");
 
             return Ok(new ApiResponse<bool>(true, "Company reactivated", result));
         }

@@ -9,6 +9,7 @@ namespace BusinessHub.Contracts.Core.Interfaces
 {
     public interface IClientRepository
     {
+        List<ClientDto> GetAll(bool? isActive = null);
         List<ClientDto> GetByCompanyId(int companyId);
         ClientDto? GetById(int clientId);
 

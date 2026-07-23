@@ -39,10 +39,10 @@ namespace BusinessHub.API.Controllers.Core.CompanySettings
             return Ok(new ApiResponse<bool>(true, "Settings updated", result));
         }
 
-        [HttpGet("{companyId}")]
+        [HttpGet("{companyId:int}")]
         public IActionResult GetByCompanyId(int companyId)
         {
-            var result = _service.GetByCompanyId(companyId);
+            var result = _service.GetByCompanyId(companyId, "Admin");
 
             return Ok(new ApiResponse<CompanySettingsDto>(true, "Success", result));
         }

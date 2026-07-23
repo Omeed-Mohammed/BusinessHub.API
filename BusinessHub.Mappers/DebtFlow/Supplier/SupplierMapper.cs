@@ -12,27 +12,42 @@ namespace BusinessHub.Mappers.DebtFlow.Supplier
 {
     public static class SupplierMapper
     {
-        public static SupplierDto CreateToDebtDto(CreateSupplierRequestDto request)
+        public static SupplierDto CreateToDto(
+            CreateSupplierRequestDto request,
+            int companyID,
+            string currentUser)
         {
             return new SupplierDto(
-                supplierID: 0, // DB will generate
+                supplierID: 0,
+                companyID: companyID,
                 fullName: request.FullName!.Trim(),
                 phone: request.Phone ?? string.Empty,
-                address: request.Address ?? string.Empty,
-                note: request.Note ?? string.Empty,
-                isActive: true
+                address: request.Address,
+                note: request.Note,
+                isActive: true,
+                createdBy: currentUser,
+                createdAt: DateTime.UtcNow,
+                updatedBy: null,
+                updatedAt: null
             );
         }
 
-        public static SupplierDto UpdateToDto(UpdateSupplierRequest request)
+        public static SupplierDto UpdateToDto(
+            UpdateSupplierRequestDto request,
+            string currentUser)
         {
             return new SupplierDto(
                 supplierID: request.SupplierID,
-                fullName: request.FullName.Trim(),
+                companyID: 0,
+                fullName: request.FullName!.Trim(),
                 phone: request.Phone ?? string.Empty,
-                address: request.Address ?? string.Empty,
-                note: request.Note ?? string.Empty,
-                isActive: true
+                address: request.Address,
+                note: request.Note,
+                isActive: true,
+                createdBy: string.Empty,
+                createdAt: DateTime.MinValue,
+                updatedBy: currentUser,
+                updatedAt: DateTime.UtcNow
             );
         }
     }

@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BusinessHub.Contracts\BusinessHub.Contracts.csproj" />
+    <ProjectReference Include="..\BusinessHub.Mappers\BusinessHub.Mappers.csproj" />
+    <ProjectReference Include="..\BusinessHub.Validators\BusinessHub.Validators.csproj" />
+  </ItemGroup>
+
+</Project>

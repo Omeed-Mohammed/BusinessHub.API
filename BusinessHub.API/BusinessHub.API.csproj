@@ -19,8 +19,10 @@
     <ProjectReference Include="..\BusinessHub.Mappers\BusinessHub.Mappers.csproj" />
     <ProjectReference Include="..\BusinessHub.Middlewares\BusinessHub.Middlewares.csproj" />
     <ProjectReference Include="..\BusinessHub.Modules.Core\BusinessHub.Modules.Core.csproj" />
+    <ProjectReference Include="..\BusinessHub.Modules.DebtFlow\BusinessHub.Modules.DebtFlow.csproj" />
     <ProjectReference Include="..\BusinessHub.Modules.Identity\BusinessHub.Modules.Identity.csproj" />
     <ProjectReference Include="..\BusinessHub.Modules.Persons\BusinessHub.Modules.Persons.csproj" />
+    <ProjectReference Include="..\BusinessHub.Modules.Projects\BusinessHub.Modules.Projects.csproj" />
     <ProjectReference Include="..\BusinessHub.Validators\BusinessHub.Validators.csproj" />
   </ItemGroup>
 

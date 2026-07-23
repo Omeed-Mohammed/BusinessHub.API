@@ -15,7 +15,7 @@ namespace BusinessHub.Mappers.Core.Company
             return new CompanyDto(
                 request.CompanyID,
                 request.CompanyName,
-                request.BusinessType!,
+                request.BusinessType ?? string.Empty,
                 request.LicenseNumber,
                 request.Phone,
                 request.Email,

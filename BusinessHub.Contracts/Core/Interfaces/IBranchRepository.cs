@@ -9,6 +9,7 @@ namespace BusinessHub.Contracts.Core.Interfaces
 {
     public interface IBranchRepository
     {
+        List<BranchDto> GetAll(bool? isActive = null);
         List<BranchDto> GetByCompanyId(int companyId);
         BranchDto? GetById(int branchId);
 

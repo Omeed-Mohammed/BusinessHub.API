@@ -20,6 +20,7 @@ namespace BusinessHub.Contracts.Core.DTOs
         public string? CreatedBy { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public string? UpdatedBy { get; set; }
+        public int? ClientTypeID { get; set; }
 
         public ClientDto(
             int clientID,
@@ -33,7 +34,8 @@ namespace BusinessHub.Contracts.Core.DTOs
             DateTime? createdAt,
             string? createdBy,
             DateTime? updatedAt,
-            string? updatedBy)
+            string? updatedBy,
+            int? clientTypeID)
         {
             ClientID = clientID;
             CompanyID = companyID;
@@ -47,6 +49,7 @@ namespace BusinessHub.Contracts.Core.DTOs
             CreatedBy = createdBy;
             UpdatedAt = updatedAt;
             UpdatedBy = updatedBy;
+            ClientTypeID = clientTypeID;
         }
     }
 }

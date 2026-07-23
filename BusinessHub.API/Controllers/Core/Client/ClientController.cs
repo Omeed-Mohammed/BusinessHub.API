@@ -19,6 +19,14 @@ namespace BusinessHub.API.Controllers.Core.Client
             _service = service;
         }
 
+        [HttpGet]
+        public IActionResult GetAll(bool? isActive = null)
+        {
+            var result = _service.GetAll(isActive);
+
+            return Ok(new ApiResponse<List<ClientDto>>(true, "Success", result));
+        }
+
         [HttpPost]
         public IActionResult Add(CreateClientRequest request)
         {
@@ -39,7 +47,7 @@ namespace BusinessHub.API.Controllers.Core.Client
             return Ok(new ApiResponse<bool>(true, "Client updated", result));
         }
 
-        [HttpGet("company/{companyId}")]
+        [HttpGet("company/{companyId:int}")]
         public IActionResult GetByCompanyId(int companyId)
         {
             var result = _service.GetByCompanyId(companyId);
@@ -47,7 +55,7 @@ namespace BusinessHub.API.Controllers.Core.Client
             return Ok(new ApiResponse<List<ClientDto>>(true, "Success", result));
         }
 
-        [HttpGet("{clientId}")]
+        [HttpGet("{clientId:int}")]
         public IActionResult GetById(int clientId)
         {
             var result = _service.GetById(clientId);

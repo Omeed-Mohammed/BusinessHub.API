@@ -24,7 +24,8 @@ namespace BusinessHub.Mappers.Core.Client
                 DateTime.UtcNow,
                 currentUser,
                 null,
-                null
+                null,
+                request.ClientTypeID
             );
         }
     }

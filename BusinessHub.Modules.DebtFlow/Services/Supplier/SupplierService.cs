@@ -24,11 +24,9 @@ namespace BusinessHub.Modules.DebtFlow.Services.Supplier
             return _repo.GetAllSuppliers(isActive);
         }
 
-        public SupplierDto GetSupplierById(int supplierId)
+        public SupplierDto? GetSupplierById(int supplierId)
         {
-            SupplierDto supplierDTO = _repo.GetSupplierById(supplierId);
-
-            return supplierDTO;
+            return _repo.GetSupplierById(supplierId);
         }
 
         public int AddSupplier(SupplierDto dto)
@@ -37,10 +35,8 @@ namespace BusinessHub.Modules.DebtFlow.Services.Supplier
                 string.IsNullOrWhiteSpace(dto.Phone))
                 return -1;
 
-
             return _repo.AddSupplier(dto);
         }
-
 
         public bool UpdateSupplier(SupplierDto dto)
         {
@@ -49,28 +45,28 @@ namespace BusinessHub.Modules.DebtFlow.Services.Supplier
                 string.IsNullOrWhiteSpace(dto.Phone))
                 return false;
 
-            var existingSupplier = _repo.GetSupplierById(dto.SupplierID);
-            if (existingSupplier == null)
+            SupplierDto? existingSupplier = _repo.GetSupplierById(dto.SupplierID);
+
+            if (existingSupplier is null)
                 return false;
 
             return _repo.UpdateSupplier(dto);
         }
 
-        public bool DeactivateSupplier(int supplierId)
+        public bool DeactivateSupplier(int supplierId, string currentUser)
         {
             if (supplierId <= 0)
                 return false;
 
-            return _repo.DeactivateSupplier(supplierId);
-
+            return _repo.DeactivateSupplier(supplierId, currentUser);
         }
 
-        public bool ReactivateSupplier(int supplierId)
+        public bool ReactivateSupplier(int supplierId, string currentUser)
         {
             if (supplierId <= 0)
                 return false;
 
-            return _repo.ReactivateSupplier(supplierId);
+            return _repo.ReactivateSupplier(supplierId, currentUser);
         }
     }
 }

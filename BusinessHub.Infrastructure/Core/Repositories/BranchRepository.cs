@@ -20,6 +20,45 @@ namespace BusinessHub.Infrastructure.Core.Repositories
             _cs = config.GetConnectionString("DefaultConnection")!;
         }
 
+        public List<BranchDto> GetAll(bool? isActive = null)
+        {
+            var list = new List<BranchDto>();
+
+            using var connection = new SqlConnection(_cs);
+            using var command = new SqlCommand("core.SP_Branch_GetAll", connection);
+
+            command.CommandType = CommandType.StoredProcedure;
+
+            command.Parameters.Add("@IsActive", SqlDbType.Bit).Value =
+                (object?)isActive ?? DBNull.Value;
+
+            command.Parameters.Add("@CurrentUser", SqlDbType.NVarChar, 100).Value =
+                "System";
+
+            connection.Open();
+
+            using var reader = command.ExecuteReader();
+
+            while (reader.Read())
+            {
+                list.Add(new BranchDto(
+                    reader.GetInt32(reader.GetOrdinal("BranchID")),
+                    reader.GetInt32(reader.GetOrdinal("CompanyID")),
+                    reader.GetString(reader.GetOrdinal("BranchName")),
+                    reader["Address"] as string,
+                    reader["City"] as string,
+                    reader["Phone"] as string,
+                    reader.GetBoolean(reader.GetOrdinal("IsActive")),
+                    reader.GetDateTime(reader.GetOrdinal("CreatedAt")),
+                    reader.GetString(reader.GetOrdinal("CreatedBy")),
+                    reader["UpdatedAt"] as DateTime?,
+                    reader["UpdatedBy"] as string
+                ));
+            }
+
+            return list;
+        }
+
         public List<BranchDto> GetByCompanyId(int companyId)
         {
             var list = new List<BranchDto>();

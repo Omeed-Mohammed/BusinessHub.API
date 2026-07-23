@@ -22,176 +22,201 @@ namespace BusinessHub.Infrastructure.DebtFlow.Repositories
 
         public List<SupplierDto> GetAllSuppliers(bool? isActive = true)
         {
-            var SuppliersList = new List<SupplierDto>();
+            var suppliersList = new List<SupplierDto>();
 
-            using (SqlConnection conn = new SqlConnection(_cs))
+            using var connection = new SqlConnection(_cs);
+            using var command = new SqlCommand("SP_Supplier_GetAll", connection);
+
+            command.CommandType = CommandType.StoredProcedure;
+
+            command.Parameters.Add(
+                "@IsActive",
+                SqlDbType.Bit).Value = (object?)isActive ?? DBNull.Value;
+
+            connection.Open();
+
+            using var reader = command.ExecuteReader();
+
+            int supplierIdIndex = reader.GetOrdinal("SupplierID");
+            int companyIdIndex = reader.GetOrdinal("CompanyID");
+            int fullNameIndex = reader.GetOrdinal("FullName");
+            int phoneIndex = reader.GetOrdinal("Phone");
+            int addressIndex = reader.GetOrdinal("Address");
+            int noteIndex = reader.GetOrdinal("Note");
+            int isActiveIndex = reader.GetOrdinal("IsActive");
+            int createdByIndex = reader.GetOrdinal("CreatedBy");
+            int createdAtIndex = reader.GetOrdinal("CreatedAt");
+            int updatedByIndex = reader.GetOrdinal("UpdatedBy");
+            int updatedAtIndex = reader.GetOrdinal("UpdatedAt");
+
+            while (reader.Read())
             {
-                using (SqlCommand cmd = new SqlCommand("SP_Supplier_GetAll", conn))
-                {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@IsActive", isActive.HasValue ?
-                    isActive.Value : DBNull.Value);
-
-                    conn.Open();
-
-                    using (SqlDataReader reader = cmd.ExecuteReader())
-                    {
-                        int addressIndex = reader.GetOrdinal("Address");
-                        int noteIndex = reader.GetOrdinal("Note");
-
-                        int supplierIdIndex = reader.GetOrdinal("SupplierID");
-                        int fullNameIndex = reader.GetOrdinal("FullName");
-                        int phoneIndex = reader.GetOrdinal("Phone");
-                        int isActiveIndex = reader.GetOrdinal("IsActive");
-
-
-                        while (reader.Read())
-                        {
-                            string? address = reader.IsDBNull(addressIndex)
-                                ? null
-                                : reader.GetString(addressIndex);
-
-                            string? note = reader.IsDBNull(noteIndex)
-                                ? null
-                                : reader.GetString(noteIndex);
-
-                            SuppliersList.Add(new SupplierDto(
-                                reader.GetInt32(supplierIdIndex),
-                                reader.GetString(fullNameIndex),
-                                reader.GetString(phoneIndex),
-                                address!,
-                                note!,
-                                reader.GetBoolean(isActiveIndex)
-                            ));
-                        }
-                    }
-                }
+                suppliersList.Add(
+                    new SupplierDto(
+                        reader.GetInt32(supplierIdIndex),
+                        reader.GetInt32(companyIdIndex),
+                        reader.GetString(fullNameIndex),
+                        reader.GetString(phoneIndex),
+                        reader.IsDBNull(addressIndex) ? null : reader.GetString(addressIndex),
+                        reader.IsDBNull(noteIndex) ? null : reader.GetString(noteIndex),
+                        reader.GetBoolean(isActiveIndex),
+                        reader.GetString(createdByIndex),
+                        reader.GetDateTime(createdAtIndex),
+                        reader.IsDBNull(updatedByIndex) ? null : reader.GetString(updatedByIndex),
+                        reader.IsDBNull(updatedAtIndex) ? null : reader.GetDateTime(updatedAtIndex)
+                    ));
             }
 
-            return SuppliersList;
+            return suppliersList;
         }
 
-        public SupplierDto GetSupplierById(int supplierId)
+        public SupplierDto? GetSupplierById(int supplierId)
         {
-            using (var connection = new SqlConnection(_cs))
-            using (var command = new SqlCommand("SP_Supplier_GetByID", connection))
-            {
-                command.CommandType = CommandType.StoredProcedure;
-                command.Parameters.AddWithValue("@SupplierID", supplierId);
+            using var connection = new SqlConnection(_cs);
+            using var command = new SqlCommand("SP_Supplier_GetByID", connection);
 
-                connection.Open();
+            command.CommandType = CommandType.StoredProcedure;
 
-                using (var reader = command.ExecuteReader())
-                {
-                    int supplierIdIndex = reader.GetOrdinal("SupplierID");
-                    int fullNameIndex = reader.GetOrdinal("FullName");
-                    int phoneIndex = reader.GetOrdinal("Phone");
-                    int isActiveIndex = reader.GetOrdinal("IsActive");
-                    int addressIndex = reader.GetOrdinal("Address");
-                    int noteIndex = reader.GetOrdinal("Note");
+            command.Parameters.Add("@SupplierID", SqlDbType.Int).Value = supplierId;
 
-                    if (reader.Read())
-                    {
-                        string? address = reader.IsDBNull(addressIndex)
-                               ? null
-                               : reader.GetString(addressIndex);
+            connection.Open();
 
-                        string? note = reader.IsDBNull(noteIndex)
-                            ? null
-                            : reader.GetString(noteIndex);
+            using var reader = command.ExecuteReader();
 
-                        return new SupplierDto(
-                                reader.GetInt32(supplierIdIndex),
-                                reader.GetString(fullNameIndex),
-                                reader.GetString(phoneIndex),
-                                address!,
-                                note!,
-                                reader.GetBoolean(isActiveIndex)
-                            );
-                    }
-                    else
-                        return null!;
-                }
-            }
+            if (!reader.Read())
+                return null;
+
+            int supplierIdIndex = reader.GetOrdinal("SupplierID");
+            int companyIdIndex = reader.GetOrdinal("CompanyID");
+            int fullNameIndex = reader.GetOrdinal("FullName");
+            int phoneIndex = reader.GetOrdinal("Phone");
+            int addressIndex = reader.GetOrdinal("Address");
+            int noteIndex = reader.GetOrdinal("Note");
+            int isActiveIndex = reader.GetOrdinal("IsActive");
+            int createdByIndex = reader.GetOrdinal("CreatedBy");
+            int createdAtIndex = reader.GetOrdinal("CreatedAt");
+            int updatedByIndex = reader.GetOrdinal("UpdatedBy");
+            int updatedAtIndex = reader.GetOrdinal("UpdatedAt");
+
+            return new SupplierDto(
+                reader.GetInt32(supplierIdIndex),
+                reader.GetInt32(companyIdIndex),
+                reader.GetString(fullNameIndex),
+                reader.GetString(phoneIndex),
+                reader.IsDBNull(addressIndex) ? null : reader.GetString(addressIndex),
+                reader.IsDBNull(noteIndex) ? null : reader.GetString(noteIndex),
+                reader.GetBoolean(isActiveIndex),
+                reader.GetString(createdByIndex),
+                reader.GetDateTime(createdAtIndex),
+                reader.IsDBNull(updatedByIndex) ? null : reader.GetString(updatedByIndex),
+                reader.IsDBNull(updatedAtIndex) ? null : reader.GetDateTime(updatedAtIndex)
+            );
         }
 
         public int AddSupplier(SupplierDto supplier)
         {
-            using (var connection = new SqlConnection(_cs))
-            using (var command = new SqlCommand("SP_Supplier_Add", connection))
-            {
-                command.CommandType = CommandType.StoredProcedure;
+            using var connection = new SqlConnection(_cs);
+            using var command = new SqlCommand("SP_Supplier_Add", connection);
 
-                command.Parameters.AddWithValue("@FullName", supplier.FullName);
-                command.Parameters.AddWithValue("@Phone", supplier.Phone);
+            command.CommandType = CommandType.StoredProcedure;
 
-                command.Parameters.AddWithValue("@Address",
-                    (object)supplier.Address ?? DBNull.Value);
+            command.Parameters.Add("@CompanyID", SqlDbType.Int)
+                .Value = supplier.CompanyID;
 
-                command.Parameters.AddWithValue("@Note",
-                    (object)supplier.Note ?? DBNull.Value);
+            command.Parameters.Add("@FullName", SqlDbType.NVarChar, 100)
+                .Value = supplier.FullName;
 
-                connection.Open();
-                var result = command.ExecuteScalar();
+            command.Parameters.Add("@Phone", SqlDbType.NVarChar, 20)
+                .Value = supplier.Phone;
 
-                return Convert.ToInt32(result);
-            }
+            command.Parameters.Add("@Address", SqlDbType.NVarChar, 250)
+                .Value = (object?)supplier.Address ?? DBNull.Value;
+
+            command.Parameters.Add("@Note", SqlDbType.NVarChar, 500)
+                .Value = (object?)supplier.Note ?? DBNull.Value;
+
+            command.Parameters.Add("@CreatedBy", SqlDbType.NVarChar, 100)
+                .Value = supplier.CreatedBy;
+
+            connection.Open();
+
+            object? result = command.ExecuteScalar();
+
+            return Convert.ToInt32(result);
         }
 
         public bool UpdateSupplier(SupplierDto supplier)
         {
-            using (var connection = new SqlConnection(_cs))
-            using (var command = new SqlCommand("SP_Supplier_Update", connection))
-            {
-                command.CommandType = CommandType.StoredProcedure;
+            using var connection = new SqlConnection(_cs);
+            using var command = new SqlCommand("SP_Supplier_Update", connection);
 
-                command.Parameters.AddWithValue("@SupplierID", supplier.SupplierID);
-                command.Parameters.AddWithValue("@FullName", supplier.FullName);
-                command.Parameters.AddWithValue("@Phone", supplier.Phone);
+            command.CommandType = CommandType.StoredProcedure;
 
-                command.Parameters.AddWithValue("@Address",
-                    (object)supplier.Address ?? DBNull.Value);
+            command.Parameters.Add("@SupplierID", SqlDbType.Int)
+                .Value = supplier.SupplierID;
 
-                command.Parameters.AddWithValue("@Note",
-                    (object)supplier.Note ?? DBNull.Value);
+            command.Parameters.Add("@FullName", SqlDbType.NVarChar, 100)
+                .Value = supplier.FullName;
 
+            command.Parameters.Add("@Phone", SqlDbType.NVarChar, 20)
+                .Value = supplier.Phone;
 
-                connection.Open();
-                int rowsAffected = command.ExecuteNonQuery();
-                return rowsAffected > 0;
-            }
+            command.Parameters.Add("@Address", SqlDbType.NVarChar, 250)
+                .Value = (object?)supplier.Address ?? DBNull.Value;
+
+            command.Parameters.Add("@Note", SqlDbType.NVarChar, 500)
+                .Value = (object?)supplier.Note ?? DBNull.Value;
+
+            command.Parameters.Add("@CurrentUser", SqlDbType.NVarChar, 100)
+                .Value = supplier.UpdatedBy!;
+
+            connection.Open();
+
+            int rowsAffected = command.ExecuteNonQuery();
+
+            return rowsAffected > 0;
         }
 
 
-        public bool DeactivateSupplier(int supplierId)
+        public bool DeactivateSupplier(int supplierId, string currentUser)
         {
-            using (var connection = new SqlConnection(_cs))
-            using (var command = new SqlCommand("SP_Supplier_Deactivate", connection))
-            {
-                command.CommandType = CommandType.StoredProcedure;
-                command.Parameters.AddWithValue("@SupplierID", supplierId);
+            using var connection = new SqlConnection(_cs);
+            using var command = new SqlCommand("SP_Supplier_Deactivate", connection);
 
-                connection.Open();
+            command.CommandType = CommandType.StoredProcedure;
 
-                int rowsAffected = command.ExecuteNonQuery();
-                return rowsAffected > 0;
-            }
+            command.Parameters.Add("@SupplierID", SqlDbType.Int)
+                .Value = supplierId;
+
+            command.Parameters.Add("@CurrentUser", SqlDbType.NVarChar, 100)
+                .Value = currentUser;
+
+            connection.Open();
+
+            int rowsAffected = command.ExecuteNonQuery();
+
+            return rowsAffected > 0;
         }
 
 
-        public bool ReactivateSupplier(int supplierId)
+        public bool ReactivateSupplier(int supplierId, string currentUser)
         {
-            using (var connection = new SqlConnection(_cs))
-            using (var command = new SqlCommand("SP_Supplier_Reactivate", connection))
-            {
-                command.CommandType = CommandType.StoredProcedure;
-                command.Parameters.AddWithValue("@SupplierID", supplierId);
+            using var connection = new SqlConnection(_cs);
+            using var command = new SqlCommand("SP_Supplier_Reactivate", connection);
 
-                connection.Open();
+            command.CommandType = CommandType.StoredProcedure;
 
-                int rowsAffected = command.ExecuteNonQuery();
-                return rowsAffected > 0;
-            }
+            command.Parameters.Add("@SupplierID", SqlDbType.Int)
+                .Value = supplierId;
+
+            command.Parameters.Add("@CurrentUser", SqlDbType.NVarChar, 100)
+                .Value = currentUser;
+
+            connection.Open();
+
+            int rowsAffected = command.ExecuteNonQuery();
+
+            return rowsAffected > 0;
         }
     }
 }

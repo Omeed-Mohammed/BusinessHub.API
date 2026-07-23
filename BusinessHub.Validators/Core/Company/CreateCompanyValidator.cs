@@ -24,6 +24,15 @@ namespace BusinessHub.Validators.Core.Company
             RuleFor(x => x.Email)
                 .EmailAddress().When(x => !string.IsNullOrWhiteSpace(x.Email))
                 .WithMessage("Invalid Email");
+
+            RuleFor(x => x.CompanyName)
+                .MaximumLength(200);
+
+            RuleFor(x => x.Country)
+                .MaximumLength(100);
+
+            RuleFor(x => x.City)
+                .MaximumLength(100);
         }
     }
 }

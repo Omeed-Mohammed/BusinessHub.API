@@ -22,12 +22,6 @@ namespace BusinessHub.Modules.Core.Services
             if (settings == null)
                 throw new ArgumentException("Invalid data");
 
-            if (settings.CompanyID <= 0)
-                throw new ArgumentException("CompanyID required");
-
-            if (string.IsNullOrWhiteSpace(settings.CurrencyCode))
-                throw new ArgumentException("CurrencyCode required");
-
             return _repo.Add(settings, currentUser);
         }
 
@@ -39,12 +33,12 @@ namespace BusinessHub.Modules.Core.Services
             return _repo.Update(settings, currentUser);
         }
 
-        public CompanySettingsDto GetByCompanyId(int companyId)
+        public CompanySettingsDto GetByCompanyId(int companyId, string currentUse)
         {
             if (companyId <= 0)
                 throw new ArgumentException("Invalid CompanyID");
 
-            var settings = _repo.GetByCompanyId(companyId);
+            var settings = _repo.GetByCompanyId(companyId , currentUse);
 
             if (settings == null)
                 throw new KeyNotFoundException("Settings not found");

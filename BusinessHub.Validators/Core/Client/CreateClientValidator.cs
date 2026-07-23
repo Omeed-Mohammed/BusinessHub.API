@@ -22,6 +22,9 @@ namespace BusinessHub.Validators.Core.Client
                 .EmailAddress()
                 .When(x => !string.IsNullOrWhiteSpace(x.Email))
                 .WithMessage("Invalid Email");
+
+            RuleFor(x => x.ClientTypeID)
+                .GreaterThan(0);
         }
     }
 }

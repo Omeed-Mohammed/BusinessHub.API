@@ -17,6 +17,9 @@ namespace BusinessHub.Validators.Core.Branch
 
             RuleFor(x => x.BranchName)
                 .NotEmpty().WithMessage("BranchName is required");
+
+            RuleFor(x => x.BranchName)
+                .MaximumLength(200);
         }
     }
 }

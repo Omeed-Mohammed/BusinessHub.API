@@ -30,7 +30,6 @@ namespace BusinessHub.Infrastructure.Core.Repositories
             command.Parameters.AddWithValue("@CompanyID", settings.CompanyID);
             command.Parameters.AddWithValue("@CurrencyCode", settings.CurrencyCode);
             command.Parameters.AddWithValue("@TaxRate", settings.TaxRate);
-            command.Parameters.AddWithValue("@LogoPath", (object?)settings.LogoPath ?? DBNull.Value);
             command.Parameters.AddWithValue("@DefaultLanguage", (object?)settings.DefaultLanguage ?? DBNull.Value);
             command.Parameters.AddWithValue("@CurrentUser", currentUser);
 
@@ -38,13 +37,14 @@ namespace BusinessHub.Infrastructure.Core.Repositories
             return command.ExecuteNonQuery() > 0;
         }
 
-        public CompanySettingsDto? GetByCompanyId(int companyId)
+        public CompanySettingsDto? GetByCompanyId(int companyId, string currentUser)
         {
             using var connection = new SqlConnection(_cs);
             using var command = new SqlCommand("core.SP_CompanySettings_GetByCompanyID", connection);
 
             command.CommandType = CommandType.StoredProcedure;
             command.Parameters.AddWithValue("@CompanyID", companyId);
+            command.Parameters.Add("@CurrentUser", SqlDbType.NVarChar, 100).Value = currentUser;
 
             connection.Open();
 
@@ -53,13 +53,15 @@ namespace BusinessHub.Infrastructure.Core.Repositories
             if (reader.Read())
             {
                 return new CompanySettingsDto(
-                    reader.GetInt32(reader.GetOrdinal("CompanyID")),
-                    reader.GetString(reader.GetOrdinal("CurrencyCode")),
-                    reader.GetDecimal(reader.GetOrdinal("TaxRate")),
-                    reader["LogoPath"] as string,
-                    reader["DefaultLanguage"] as string,
-                    reader.GetDateTime(reader.GetOrdinal("CreatedAt"))
-                );
+                reader.GetInt32(reader.GetOrdinal("CompanyID")),
+                reader.GetString(reader.GetOrdinal("CurrencyCode")),
+                reader.GetDecimal(reader.GetOrdinal("TaxRate")),
+                reader["DefaultLanguage"] as string,
+                reader.GetDateTime(reader.GetOrdinal("CreatedAt")),
+                reader.GetString(reader.GetOrdinal("CreatedBy")),
+                reader["UpdatedAt"] as DateTime?,
+                reader["UpdatedBy"] as string
+                 );
             }
 
             return null;
@@ -75,12 +77,12 @@ namespace BusinessHub.Infrastructure.Core.Repositories
             command.Parameters.AddWithValue("@CompanyID", settings.CompanyID);
             command.Parameters.AddWithValue("@CurrencyCode", settings.CurrencyCode);
             command.Parameters.AddWithValue("@TaxRate", settings.TaxRate);
-            command.Parameters.AddWithValue("@LogoPath", (object?)settings.LogoPath ?? DBNull.Value);
             command.Parameters.AddWithValue("@DefaultLanguage", (object?)settings.DefaultLanguage ?? DBNull.Value);
             command.Parameters.AddWithValue("@CurrentUser", currentUser);
 
+
             connection.Open();
-            return command.ExecuteNonQuery() > 0;
+            return Convert.ToInt32(command.ExecuteScalar()) == 1;
         }
     }
 }

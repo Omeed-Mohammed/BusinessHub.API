@@ -16,9 +16,11 @@ namespace BusinessHub.Mappers.Core.CompanySettings
                 request.CompanyID,
                 request.CurrencyCode,
                 request.TaxRate,
-                request.LogoPath,
                 request.DefaultLanguage,
-                DateTime.UtcNow
+                DateTime.UtcNow,
+                currentUser,
+                DateTime.UtcNow,
+                currentUser
             );
         }
     }

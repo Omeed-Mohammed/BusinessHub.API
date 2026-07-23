@@ -27,17 +27,37 @@ namespace BusinessHub.Infrastructure.Core.Repositories
 
             command.CommandType = CommandType.StoredProcedure;
 
-            command.Parameters.AddWithValue("@CompanyName", company.CompanyName);
-            command.Parameters.AddWithValue("@BusinessType", (object?)company.BusinessType ?? DBNull.Value);
-            command.Parameters.AddWithValue("@LicenseNumber", (object?)company.LicenseNumber ?? DBNull.Value);
-            command.Parameters.AddWithValue("@Phone", (object?)company.Phone ?? DBNull.Value);
-            command.Parameters.AddWithValue("@Email", (object?)company.Email ?? DBNull.Value);
-            command.Parameters.AddWithValue("@Website", (object?)company.Website ?? DBNull.Value);
-            command.Parameters.AddWithValue("@Country", company.Country);
-            command.Parameters.AddWithValue("@City", company.City);
-            command.Parameters.AddWithValue("@AddressLine", (object?)company.AddressLine ?? DBNull.Value);
-            command.Parameters.AddWithValue("@LogoPath", (object?)company.LogoPath ?? DBNull.Value);
-            command.Parameters.AddWithValue("@CurrentUser", currentUser);
+            command.Parameters.Add("@CompanyName", SqlDbType.NVarChar, 200)
+                  .Value = company.CompanyName;
+            command.Parameters.Add("@BusinessType", SqlDbType.NVarChar, 100).Value =
+                (object?)company.BusinessType ?? DBNull.Value;
+
+            command.Parameters.Add("@LicenseNumber", SqlDbType.NVarChar, 100).Value =
+                (object?)company.LicenseNumber ?? DBNull.Value;
+
+            command.Parameters.Add("@Phone", SqlDbType.NVarChar, 50).Value =
+                (object?)company.Phone ?? DBNull.Value;
+
+            command.Parameters.Add("@Email", SqlDbType.NVarChar, 255).Value =
+                (object?)company.Email ?? DBNull.Value;
+
+            command.Parameters.Add("@Website", SqlDbType.NVarChar, 500).Value =
+                (object?)company.Website ?? DBNull.Value;
+
+            command.Parameters.Add("@Country", SqlDbType.NVarChar, 100).Value =
+                company.Country;
+
+            command.Parameters.Add("@City", SqlDbType.NVarChar, 100).Value =
+                company.City;
+
+            command.Parameters.Add("@AddressLine", SqlDbType.NVarChar, 500).Value =
+                (object?)company.AddressLine ?? DBNull.Value;
+
+            command.Parameters.Add("@LogoPath", SqlDbType.NVarChar, 500).Value =
+                (object?)company.LogoPath ?? DBNull.Value;
+
+            command.Parameters.Add("@CurrentUser", SqlDbType.NVarChar, 100).Value =
+                currentUser;
 
             connection.Open();
             var result = command.ExecuteScalar();
@@ -45,7 +65,7 @@ namespace BusinessHub.Infrastructure.Core.Repositories
             return Convert.ToInt32(result);
         }
 
-        public List<CompanyDto> GetAllCompanies()
+        public List<CompanyDto> GetAll(string currentUser, bool? isActive = null)
         {
             var list = new List<CompanyDto>();
 
@@ -53,31 +73,40 @@ namespace BusinessHub.Infrastructure.Core.Repositories
             using var command = new SqlCommand("core.SP_Company_GetAll", connection);
 
             command.CommandType = CommandType.StoredProcedure;
+            command.Parameters.Add("@CurrentUser", SqlDbType.NVarChar, 100).Value = currentUser;
+            command.Parameters.Add("@IsActive", SqlDbType.Bit).Value =
+                              (object?)isActive ?? DBNull.Value;
 
             connection.Open();
 
             using var reader = command.ExecuteReader();
 
-            int id = reader.GetOrdinal("CompanyID");
-            int name = reader.GetOrdinal("CompanyName");
+            int companyId = reader.GetOrdinal("CompanyID");
+            int companyName = reader.GetOrdinal("CompanyName");
+            int businessType = reader.GetOrdinal("BusinessType");
+            int country = reader.GetOrdinal("Country");
+            int city = reader.GetOrdinal("City");
+            int isActiveOrdinal = reader.GetOrdinal("IsActive");
+            int createdAt = reader.GetOrdinal("CreatedAt");
+            int createdBy = reader.GetOrdinal("CreatedBy");
 
             while (reader.Read())
             {
                 list.Add(new CompanyDto(
-                    reader.GetInt32(id),
-                    reader.GetString(name),
-                    reader.GetString(reader.GetOrdinal("BusinessType")),
+                    reader.GetInt32(companyId),
+                    reader.GetString(companyName),
+                    reader.IsDBNull(businessType) ? string.Empty : reader.GetString(businessType),
                     reader["LicenseNumber"] as string,
                     reader["Phone"] as string,
                     reader["Email"] as string,
                     reader["Website"] as string,
-                    reader.GetString(reader.GetOrdinal("Country")),
-                    reader.GetString(reader.GetOrdinal("City")),
+                    reader.GetString(country),
+                    reader.GetString(city),
                     reader["AddressLine"] as string,
                     reader["LogoPath"] as string,
-                    reader.GetBoolean(reader.GetOrdinal("IsActive")),
-                    reader.GetDateTime(reader.GetOrdinal("CreatedAt")),
-                    reader.GetString(reader.GetOrdinal("CreatedBy")),
+                    reader.GetBoolean(isActiveOrdinal),
+                    reader.GetDateTime(createdAt),
+                    reader.GetString(createdBy),
                     reader["UpdatedAt"] as DateTime?,
                     reader["UpdatedBy"] as string
                 ));
@@ -86,13 +115,14 @@ namespace BusinessHub.Infrastructure.Core.Repositories
             return list;
         }
 
-        public CompanyDto? GetCompanyById(int companyId)
+        public CompanyDto? GetCompanyById(int companyId, string currentUser)
         {
             using var connection = new SqlConnection(_cs);
             using var command = new SqlCommand("core.SP_Company_GetByID", connection);
 
             command.CommandType = CommandType.StoredProcedure;
             command.Parameters.AddWithValue("@CompanyID", companyId);
+            command.Parameters.Add("@CurrentUser", SqlDbType.NVarChar, 100).Value = currentUser;
 
             connection.Open();
 
@@ -130,45 +160,47 @@ namespace BusinessHub.Infrastructure.Core.Repositories
 
             command.CommandType = CommandType.StoredProcedure;
 
-            command.Parameters.AddWithValue("@CompanyID", company.CompanyID);
-            command.Parameters.AddWithValue("@CompanyName", company.CompanyName);
-            command.Parameters.AddWithValue("@BusinessType", (object?)company.BusinessType ?? DBNull.Value);
-            command.Parameters.AddWithValue("@LicenseNumber", (object?)company.LicenseNumber ?? DBNull.Value);
-            command.Parameters.AddWithValue("@Phone", (object?)company.Phone ?? DBNull.Value);
-            command.Parameters.AddWithValue("@Email", (object?)company.Email ?? DBNull.Value);
-            command.Parameters.AddWithValue("@Website", (object?)company.Website ?? DBNull.Value);
-            command.Parameters.AddWithValue("@Country", company.Country);
-            command.Parameters.AddWithValue("@City", company.City);
-            command.Parameters.AddWithValue("@AddressLine", (object?)company.AddressLine ?? DBNull.Value);
-            command.Parameters.AddWithValue("@LogoPath", (object?)company.LogoPath ?? DBNull.Value);
-            command.Parameters.AddWithValue("@CurrentUser", currentUser);
+            command.Parameters.Add("@CompanyID", SqlDbType.Int).Value = company.CompanyID;
+            command.Parameters.Add("@CompanyName", SqlDbType.NVarChar, 200).Value = company.CompanyName;
+            command.Parameters.Add("@BusinessType", SqlDbType.NVarChar, 100).Value = (object?)company.BusinessType ?? DBNull.Value;
+            command.Parameters.Add("@LicenseNumber", SqlDbType.NVarChar, 100).Value = (object?)company.LicenseNumber ?? DBNull.Value;
+            command.Parameters.Add("@Phone", SqlDbType.NVarChar, 50).Value = (object?)company.Phone ?? DBNull.Value;
+            command.Parameters.Add("@Email", SqlDbType.NVarChar, 150).Value = (object?)company.Email ?? DBNull.Value;
+            command.Parameters.Add("@Website", SqlDbType.NVarChar, 150).Value = (object?)company.Website ?? DBNull.Value;
+            command.Parameters.Add("@Country", SqlDbType.NVarChar, 100).Value = company.Country;
+            command.Parameters.Add("@City", SqlDbType.NVarChar, 100).Value = company.City;
+            command.Parameters.Add("@AddressLine", SqlDbType.NVarChar, 250).Value = (object?)company.AddressLine ?? DBNull.Value;
+            command.Parameters.Add("@LogoPath", SqlDbType.NVarChar, 250).Value = (object?)company.LogoPath ?? DBNull.Value;
+            command.Parameters.Add("@CurrentUser", SqlDbType.NVarChar, 100).Value = currentUser;
 
             connection.Open();
-            return command.ExecuteNonQuery() > 0;
+            return Convert.ToInt32(command.ExecuteScalar()) == 1;
         }
 
-        public bool DeactivateCompany(int companyId)
+        public bool DeactivateCompany(int companyId, string currentUser)
         {
             using var connection = new SqlConnection(_cs);
             using var command = new SqlCommand("core.SP_Company_Deactivate", connection);
 
             command.CommandType = CommandType.StoredProcedure;
             command.Parameters.AddWithValue("@CompanyID", companyId);
+            command.Parameters.Add("@CurrentUser", SqlDbType.NVarChar, 100).Value = currentUser;
 
             connection.Open();
-            return command.ExecuteNonQuery() > 0;
+            return Convert.ToInt32(command.ExecuteScalar()) == 1;
         }
 
-        public bool ReactivateCompany(int companyId)
+        public bool ReactivateCompany(int companyId, string currentUser)
         {
             using var connection = new SqlConnection(_cs);
             using var command = new SqlCommand("core.SP_Company_Reactivate", connection);
 
             command.CommandType = CommandType.StoredProcedure;
             command.Parameters.AddWithValue("@CompanyID", companyId);
+            command.Parameters.Add("@CurrentUser", SqlDbType.NVarChar, 100).Value = currentUser;
 
             connection.Open();
-            return command.ExecuteNonQuery() > 0;
+            return Convert.ToInt32(command.ExecuteScalar()) == 1;
         }
     }
 }

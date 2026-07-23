@@ -10,10 +10,10 @@ namespace BusinessHub.Contracts.DebtFlow.Interfaces
     public interface ISupplierRepository
     {
         List<SupplierDto> GetAllSuppliers(bool? isActive = true);
-        SupplierDto GetSupplierById(int supplierId);
+        SupplierDto? GetSupplierById(int supplierId);
         int AddSupplier(SupplierDto supplier);
         bool UpdateSupplier(SupplierDto supplier);
-        bool DeactivateSupplier(int supplierId);
-        bool ReactivateSupplier(int supplierId);
+        bool DeactivateSupplier(int supplierId , string currentUser);
+        bool ReactivateSupplier(int supplierId , string currentUser);
     }
 }

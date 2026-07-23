@@ -17,16 +17,15 @@ namespace BusinessHub.Modules.Core.Services
             _repo = repo;
         }
 
+        public List<ClientDto> GetAll(bool? isActive = null)
+        {
+            return _repo.GetAll(isActive) ?? new List<ClientDto>();
+        }
+
         public int Add(ClientDto client, string currentUser)
         {
             if (client == null)
                 throw new ArgumentException("Invalid data");
-
-            if (client.CompanyID <= 0)
-                throw new ArgumentException("CompanyID required");
-
-            if (string.IsNullOrWhiteSpace(client.ClientName))
-                throw new ArgumentException("ClientName required");
 
             return _repo.Add(client, currentUser);
         }

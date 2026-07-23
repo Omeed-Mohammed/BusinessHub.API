@@ -23,6 +23,10 @@ namespace BusinessHub.Validators.Core.Company
 
             RuleFor(x => x.City)
                 .NotEmpty();
+
+            RuleFor(x => x.Email)
+                .EmailAddress()
+                .When(x => !string.IsNullOrWhiteSpace(x.Email));
         }
     }
 }

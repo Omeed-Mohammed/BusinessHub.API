@@ -1,15 +1,34 @@
 using BusinessHub.Contracts.Persons.Interfaces;
+using BusinessHub.Infrastructure.Core.Repositories;
+using BusinessHub.Infrastructure.DebtFlow.Repositories;
 using BusinessHub.Infrastructure.Persons.Repositories;
 using BusinessHub.Middlewares;
+using BusinessHub.Modules.Core.Services;
+using BusinessHub.Modules.DebtFlow.Services.Supplier;
 using BusinessHub.Modules.Persons.Services;
 using BusinessHub.Validators.Persons;
 using FluentValidation;
 
 
 
+
+
+
 var builder = WebApplication.CreateBuilder(args);
 
-var assembly = typeof(PersonService).Assembly;
+var serviceAssemblies = new[]
+{
+    typeof(PersonService).Assembly,
+    typeof(SupplierService).Assembly,
+    typeof(CompanyService).Assembly
+};
+
+var repositoryAssemblies = new[]
+{
+    typeof(PersonRepository).Assembly,
+    typeof(SupplierRepository).Assembly,
+    typeof(CompanyRepository).Assembly
+};
 
 
 var cs = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -17,16 +36,16 @@ var cs = builder.Configuration.GetConnectionString("DefaultConnection");
 
 
 builder.Services.Scan(scan => scan
-    .FromAssemblies(assembly)
+    .FromAssemblies(serviceAssemblies)
     .AddClasses(c => c.Where(t => t.Name.EndsWith("Service")))
         .AsSelf()
         .WithScopedLifetime());
 
 builder.Services.Scan(scan => scan
-    .FromAssemblies(typeof(PersonRepository).Assembly)
+    .FromAssemblies(repositoryAssemblies)
     .AddClasses(c => c.Where(t => t.Name.EndsWith("Repository")))
-        .AsImplementedInterfaces()
-        .WithScopedLifetime());
+    .AsImplementedInterfaces()
+    .WithScopedLifetime());
 
 
 // Registers all FluentValidation validators from the specified assembly

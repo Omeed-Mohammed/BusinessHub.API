@@ -39,7 +39,7 @@ namespace BusinessHub.API.Controllers.Core.Branch
             return Ok(new ApiResponse<bool>(true, "Branch updated", result));
         }
 
-        [HttpGet("company/{companyId}")]
+        [HttpGet("company/{companyId:int}")]
         public IActionResult GetByCompanyId(int companyId)
         {
             var result = _service.GetByCompanyId(companyId);
@@ -47,7 +47,7 @@ namespace BusinessHub.API.Controllers.Core.Branch
             return Ok(new ApiResponse<List<BranchDto>>(true, "Success", result));
         }
 
-        [HttpGet("{branchId}")]
+        [HttpGet("{branchId:int}")]
         public IActionResult GetById(int branchId)
         {
             var result = _service.GetById(branchId);

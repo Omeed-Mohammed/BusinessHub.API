@@ -9,13 +9,13 @@ namespace BusinessHub.Contracts.Core.Interfaces
 {
     public interface ICompanyRepository
     {
-        List<CompanyDto> GetAllCompanies();
-        CompanyDto? GetCompanyById(int companyId);
+        List<CompanyDto> GetAll(string currentUser, bool? isActive = null);
+        CompanyDto? GetCompanyById(int companyId, string currentUser);
 
         int AddCompany(CompanyDto company, string currentUser);
         bool UpdateCompany(CompanyDto company, string currentUser);
 
-        bool DeactivateCompany(int companyId);
-        bool ReactivateCompany(int companyId);
+        bool DeactivateCompany(int companyId, string currentUser);
+        bool ReactivateCompany(int companyId, string currentUser);
     }
 }
